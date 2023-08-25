@@ -1,20 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react';
+import reducer, { initialWheelState } from '../state/reducer'; 
+import { moveClockwise, moveCounterClockwise } from '../state/action-creators';
+import { connect } from 'react-redux';
 
-export default function Wheel(props) {
+function Wheel(props) {
+    const { wheel, moveClockwise, moveCounterClockwise } = props; 
+
+  const [current, setCurrent] = useState({
+        isCurrent: "cog active",
+        isNotCurrent: "cog",
+        isCurrentB: "B", 
+        isNotCurrentB: ""  
+  })
+
+  
+
+  const wheelCurrent = [0, 1, 2, 3, 4, 5].map(i => (
+    <div className= {wheel === i ?`${current.isCurrent}`:`${current.isNotCurrent}`} 
+         style={{ "--i": i }}
+         key={i} 
+         >{wheel === i ?`${current.isCurrentB}`:`${current.isNotCurrentB}`} 
+         </div>
+  ))
+
+
   return (
     <div id="wrapper">
-      <div id="wheel">
-        <div className="cog active" style={{ "--i": 0 }}>B</div>
-        <div className="cog" style={{ "--i": 1 }}></div>
-        <div className="cog" style={{ "--i": 2 }}></div>
-        <div className="cog" style={{ "--i": 3 }}></div>
-        <div className="cog" style={{ "--i": 4 }}></div>
-        <div className="cog" style={{ "--i": 5 }}></div>{/* --i is a custom CSS property, no need to touch that nor the style object */}
+      <div id="wheel"> {wheelCurrent}
       </div>
       <div id="keypad">
-        <button id="counterClockwiseBtn" >Counter clockwise</button>
-        <button id="clockwiseBtn">Clockwise</button>
+        <button onClick={moveCounterClockwise} id="counterClockwiseBtn" >Counter clockwise</button>
+        <button onClick={moveClockwise} id="clockwiseBtn">Clockwise</button>
       </div>
     </div>
   )
 }
+
+const mapStateToProps = state => {
+  return {
+    wheel: state.wheel
+  }
+}
+
+export default connect(mapStateToProps, {moveClockwise, moveCounterClockwise})(Wheel); 
